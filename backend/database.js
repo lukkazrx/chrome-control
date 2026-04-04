@@ -237,12 +237,13 @@ async function iniciarBanco() {
       ('agenda_dominio', ''),
       ('agenda_hora_inicio', '07:00'),
       ('agenda_hora_fim', '18:00'),
-      ('agenda_duracao_slot', '50')
+      ('agenda_duracao_slot', '50'),
+      ('agenda_sabado', '0')
     `);
   } else {
     // Migration: add agenda keys if they don't exist
-    const keys = ['agenda_dominio', 'agenda_hora_inicio', 'agenda_hora_fim', 'agenda_duracao_slot'];
-    const defaults = { agenda_dominio: '', agenda_hora_inicio: '07:00', agenda_hora_fim: '18:00', agenda_duracao_slot: '50' };
+    const keys = ['agenda_dominio', 'agenda_hora_inicio', 'agenda_hora_fim', 'agenda_duracao_slot', 'agenda_sabado'];
+    const defaults = { agenda_dominio: '', agenda_hora_inicio: '07:00', agenda_hora_fim: '18:00', agenda_duracao_slot: '50', agenda_sabado: '0' };
     for (const k of keys) {
       const exists = await get(`SELECT chave FROM configuracoes WHERE chave = ?`, [k]);
       if (!exists) await run(`INSERT INTO configuracoes (chave, valor) VALUES (?, ?)`, [k, defaults[k]]);

@@ -35,10 +35,11 @@ router.get('/config', async (req, res) => {
     const c = {};
     for (const r of rows) c[r.chave] = r.valor;
     res.json({
-      hora_inicio:    c.agenda_hora_inicio    || '07:00',
-      hora_fim:       c.agenda_hora_fim       || '18:00',
-      duracao_slot:   parseInt(c.agenda_duracao_slot || '50'),
-      dominio:        c.agenda_dominio        || '',
+      hora_inicio:  c.agenda_hora_inicio  || '07:00',
+      hora_fim:     c.agenda_hora_fim     || '18:00',
+      duracao_slot: parseInt(c.agenda_duracao_slot || '50'),
+      dominio:      c.agenda_dominio      || '',
+      sabado:       c.agenda_sabado === '1',
     });
   } catch (err) { res.status(500).json({ erro: err.message }); }
 });

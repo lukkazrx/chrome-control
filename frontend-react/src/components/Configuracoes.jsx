@@ -14,6 +14,7 @@ export default function Configuracoes({ state, setState, usuarioLogado }) {
     agenda_hora_inicio: '07:00',
     agenda_hora_fim: '18:00',
     agenda_duracao_slot: '50',
+    agenda_sabado: '0',
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -347,6 +348,20 @@ export default function Configuracoes({ state, setState, usuarioLogado }) {
                 />
               </div>
             </div>
+
+            {/* Toggle: Sábados */}
+            <label className="toggle-switch" htmlFor="toggle-sabado">
+              <input
+                id="toggle-sabado"
+                type="checkbox"
+                checked={formData.agenda_sabado === '1'}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, agenda_sabado: e.target.checked ? '1' : '0' }))
+                }
+              />
+              <span className="toggle-slider" />
+              <span className="toggle-label">Habilitar agendamentos aos sábados</span>
+            </label>
           </div>
 
           <div>

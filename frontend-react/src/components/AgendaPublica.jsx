@@ -60,7 +60,7 @@ export default function AgendaPublica() {
   const hoje = new Date();
   hoje.setHours(0,0,0,0);
 
-  const [config, setConfig]         = useState({ hora_inicio:'07:00', hora_fim:'18:00', duracao_slot:50, dominio:'' });
+  const [config, setConfig]         = useState({ hora_inicio:'07:00', hora_fim:'18:00', duracao_slot:50, dominio:'', sabado:false });
   const [recursos, setRecursos]     = useState([]);
   const [recurso, setRecurso]       = useState('');
   const [agendamentos, setAgendamentos] = useState([]);
@@ -249,16 +249,20 @@ export default function AgendaPublica() {
                 const isHoje    = fmtData(dia) === fmtData(hoje);
                 const isSel     = fmtData(dia) === fmtData(diaSel);
                 const temAg     = diasComAg.has(dataStr);
-                const passado   = dia < hoje;
+                const passado    = dia < hoje;
+                const isSabado   = dia.getDay() === 6;
+                const isDomingo  = dia.getDay() === 0;
+                const bloqueado  = passado || isDomingo || (isSabado && !config.sabado);
                 return (
                   <button
                     key={dataStr}
-                    onClick={() => { setDiaSel(dia); setSlotForm(null); setDetalhe(null); }}
+                    onClick={() => { if (!bloqueado) { setDiaSel(dia); setSlotForm(null); setDetalhe(null); } }}
+                    disabled={bloqueado}
                     className={[
                       'ap-cal-day',
-                      isSel   ? 'sel'     : '',
-                      isHoje  ? 'hoje'    : '',
-                      passado ? 'passado' : '',
+                      isSel     ? 'sel'      : '',
+                      isHoje    ? 'hoje'     : '',
+                      bloqueado ? 'passado'  : '',
                     ].filter(Boolean).join(' ')}
                   >
                     {dia.getDate()}

@@ -53,7 +53,7 @@ export default function Agendamentos({ usuarioLogado, state }) {
   const isAdmin = usuarioLogado?.perfil === 'admin';
   const hoje    = new Date(); hoje.setHours(0,0,0,0);
 
-  const [config, setConfig]         = useState({ hora_inicio:'07:00', hora_fim:'18:00', duracao_slot:50 });
+  const [config, setConfig]         = useState({ hora_inicio:'07:00', hora_fim:'18:00', duracao_slot:50, sabado:false });
   const [recursos, setRecursos]     = useState([]);
   const [recursoSel, setRecursoSel] = useState('todos');
   const [agendamentos, setAgendamentos] = useState([]);
@@ -101,10 +101,12 @@ export default function Agendamentos({ usuarioLogado, state }) {
 
   useEffect(() => { carregarAgendamentos(); }, [carregarAgendamentos]);
 
-  // Dias da semana no desktop
-  const diasSemana = useMemo(() =>
-    [1,2,3,4,5].map(i => addDias(semanaBase, i-1)), [semanaBase]
-  );
+  // Dias da semana no desktop (Seg–Sex, +Sáb se habilitado)
+  const diasSemana = useMemo(() => {
+    const dias = [1,2,3,4,5].map(i => addDias(semanaBase, i-1));
+    if (config.sabado) dias.push(addDias(semanaBase, 5)); // Sábado
+    return dias;
+  }, [semanaBase, config.sabado]);
 
   // Slots de horário
   const slots = useMemo(() =>
