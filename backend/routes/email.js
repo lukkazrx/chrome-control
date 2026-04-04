@@ -7,6 +7,18 @@
 const express = require('express');
 const router  = express.Router();
 const axios   = require('axios');
+const { all } = require('../database');
+
+async function getEmailConfigs() {
+  const rows = await all(`SELECT chave, valor FROM configuracoes`);
+  const c = {};
+  for(let r of rows) c[r.chave] = r.valor;
+  return {
+    brevoKey: c.brevo_api_key || process.env.BREVO_API_KEY,
+    emailFrom: c.email_remetente || process.env.EMAIL_FROM,
+    emailName: c.nome_remetente || process.env.EMAIL_FROM_NAME || 'ChromeControl Escola Padrão'
+  };
+}
 
 function cargoLabel(tipo, materia) {
   if (tipo === 'Matéria')     return `Prof. de ${materia}`;
@@ -153,23 +165,24 @@ router.post('/comprovante', async (req, res) => {
     return res.status(400).json({ erro: 'Campos obrigatórios ausentes.' });
   }
 
-  if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'sua-chave-aqui') {
-    return res.status(500).json({ erro: 'Chave de API do Brevo não configurada no arquivo .env' });
-  }
-
   try {
+    const conf = await getEmailConfigs();
+    if (!conf.brevoKey || conf.brevoKey === 'sua-chave-aqui') {
+      return res.status(500).json({ erro: 'Chave de API do Brevo não configurada no painel de configurações.' });
+    }
+
     const isRetirada = acao === 'retirada';
     const icone = isRetirada ? '📤' : '✅';
     const tituloEmail = isRetirada ? `Retirada de Chromebooks (${chromebooks.length})` : `Comprovante de Devolução (${chromebooks.length})`;
 
     await axios.post('https://api.brevo.com/v3/smtp/email', {
-      sender:      { name: process.env.EMAIL_FROM_NAME || 'ChromeControl', email: process.env.EMAIL_FROM },
+      sender:      { name: conf.emailName, email: conf.emailFrom },
       to:          [{ email: professorEmail, name: professorNome }],
       subject:     `${icone} ${tituloEmail} - ${professorNome}`,
       htmlContent: gerarHtmlComprovante({ acao, professorNome, turma, tipo, materia, chromebooks, dataMovimentacao, obs }),
     }, {
       headers: {
-        'api-key':      process.env.BREVO_API_KEY,
+        'api-key':      conf.brevoKey,
         'Content-Type': 'application/json',
       },
     });
@@ -191,13 +204,14 @@ router.post('/lembrete', async (req, res) => {
     return res.status(400).json({ erro: 'Campos obrigatórios ausentes.' });
   }
 
-  if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'sua-chave-aqui') {
-    return res.status(500).json({ erro: 'Chave de API do Brevo não configurada no arquivo .env' });
-  }
-
   try {
+    const conf = await getEmailConfigs();
+    if (!conf.brevoKey || conf.brevoKey === 'sua-chave-aqui') {
+      return res.status(500).json({ erro: 'Chave de API do Brevo não configurada no painel de configurações.' });
+    }
+
     await axios.post('https://api.brevo.com/v3/smtp/email', {
-      sender:      { name: process.env.EMAIL_FROM_NAME, email: process.env.EMAIL_FROM },
+      sender:      { name: conf.emailName, email: conf.emailFrom },
       to:          [{ email: professorEmail, name: professorNome }],
       cc:          [{ email: 'lucas.nunes@lasalle.org.br', name: 'Informática Canoas' }],
       replyTo:     { email: 'lucas.nunes@lasalle.org.br', name: 'Informática Canoas' },
@@ -205,7 +219,7 @@ router.post('/lembrete', async (req, res) => {
       htmlContent: gerarHtml({ professorNome, turma, tipo, materia, chromebooks, dataRetirada, obs }),
     }, {
       headers: {
-        'api-key':      process.env.BREVO_API_KEY,
+        'api-key':      conf.brevoKey,
         'Content-Type': 'application/json',
       },
     });
@@ -220,17 +234,22 @@ router.post('/lembrete', async (req, res) => {
 });
 
 // GET /api/email/status
-router.get('/status', (req, res) => {
-  const configurado = !!(
-    process.env.BREVO_API_KEY &&
-    process.env.BREVO_API_KEY !== 'sua-chave-aqui' &&
-    process.env.EMAIL_FROM
-  );
+router.get('/status', async (req, res) => {
+  try {
+    const conf = await getEmailConfigs();
+    const configurado = !!(
+      conf.brevoKey &&
+      conf.brevoKey !== 'sua-chave-aqui' &&
+      conf.emailFrom
+    );
 
-  if (configurado) {
-    res.json({ ok: true, mensagem: 'Brevo configurado ✅', remetente: process.env.EMAIL_FROM });
-  } else {
-    res.status(500).json({ ok: false, mensagem: 'Brevo não configurado. Preencha o .env ❌' });
+    if (configurado) {
+      res.json({ ok: true, mensagem: 'Brevo configurado ✅', remetente: conf.emailFrom });
+    } else {
+      res.status(500).json({ ok: false, mensagem: 'Brevo não configurado no Painel. ❌' });
+    }
+  } catch(err) {
+    res.status(500).json({ ok: false, mensagem: 'Erro ao verificar configurações.' });
   }
 });
 

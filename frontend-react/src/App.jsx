@@ -14,10 +14,24 @@ import Professores from './components/Professores.jsx';
 import Historico from './components/Historico.jsx';
 import Usuarios from './components/Usuarios.jsx';
 import Logs from './components/Logs.jsx';
+import Configuracoes from './components/Configuracoes.jsx';
+import Agendamentos from './components/Agendamentos.jsx';
+import AgendaPublica from './components/AgendaPublica.jsx';
 import ConfirmModal from './components/ConfirmModal.jsx';
 import ToastContainer from './components/ToastContainer.jsx';
 
-export default function App() {
+// Wrapper para detectar rota pública sem violar regra dos hooks
+function AppRoot() {
+  if (window.location.pathname.startsWith('/agenda')) {
+    return <AgendaPublica />;
+  }
+  return <App />;
+}
+
+export default AppRoot;
+
+function App() {
+
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
   
@@ -26,7 +40,8 @@ export default function App() {
     professores: [],
     emprestimos: [],
     historico: [],
-    auditorias: [], // <-- NOVA LINHA AQUI
+    auditorias: [], 
+    configuracoes: {},
   });
 
   const [loginErro, setLoginErro] = useState('');
@@ -79,21 +94,21 @@ export default function App() {
   function fazerLogout() {
     clearToken();
     setUsuarioLogado(null);
-    // Zera tudo, incluindo auditorias
-    setState({ chromebooks: [], professores: [], emprestimos: [], historico: [], auditorias: [] });
+    // Zera tudo, incluindo configs
+    setState({ chromebooks: [], professores: [], emprestimos: [], historico: [], auditorias: [], configuracoes: {} });
   }
 
   async function carregarTudo() {
     try {
-      // ATUALIZADO: Agora busca as auditorias também!
-      const [cbs, profs, emps, hist, auds] = await Promise.all([
+      const [cbs, profs, emps, hist, auds, confs] = await Promise.all([
         GET('/chromebooks'),
         GET('/professores'),
         GET('/emprestimos'),
         GET('/emprestimos/historico'),
         GET('/auditorias'),
+        GET('/configuracoes'),
       ]);
-      setState({ chromebooks: cbs, professores: profs, emprestimos: emps, historico: hist, auditorias: auds });
+      setState({ chromebooks: cbs, professores: profs, emprestimos: emps, historico: hist, auditorias: auds, configuracoes: confs });
     } catch (err) {
       console.error(err);
     }
@@ -201,6 +216,8 @@ export default function App() {
         
         {currentPage === 'usuarios' && <Usuarios usuarioLogado={usuarioLogado} fazerLogout={fazerLogout} />}
         {currentPage === 'logs' && <Logs usuarioLogado={usuarioLogado} />}
+        {currentPage === 'configuracoes' && <Configuracoes state={state} setState={setState} usuarioLogado={usuarioLogado} />}
+        {currentPage === 'agenda' && <Agendamentos state={state} usuarioLogado={usuarioLogado} />}
       </main>
       
       <ToastContainer />

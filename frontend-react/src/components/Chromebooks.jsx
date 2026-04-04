@@ -590,7 +590,7 @@ export default function Chromebooks({ state, setState, usuarioLogado }) {
             </div>
 
             {/* Câmera e Input Manual */}
-            <div style={{ background: 'var(--surface2)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="audit-action-panel">
               
               <div style={{ flex: 1, minWidth: '250px' }}>
                 <label className="section-label" style={{ marginBottom: '0.5rem' }}>Bipar Manualmente / Leitor USB</label>

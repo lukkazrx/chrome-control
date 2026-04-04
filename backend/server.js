@@ -14,8 +14,10 @@ const rotasChromebooks            = require('./routes/chromebooks');
 const rotasProfessores            = require('./routes/professores');
 const rotasEmprestimos            = require('./routes/emprestimos');
 const rotasEmail                  = require('./routes/email');
-const rotasAuditorias             = require('./routes/auditorias'); // <-- NOVA ROTA AQUI
-const rotasLogs                   = require('./routes/logs'); // <-- NOVA ROTA AQUI
+const rotasAuditorias             = require('./routes/auditorias'); 
+const rotasLogs                   = require('./routes/logs'); 
+const rotasConfiguracoes          = require('./routes/configuracoes');
+const rotasAgenda                 = require('./routes/agenda');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -35,8 +37,10 @@ app.use('/api/chromebooks', autenticar, rotasChromebooks);
 app.use('/api/professores', autenticar, rotasProfessores);
 app.use('/api/emprestimos', autenticar, rotasEmprestimos);
 app.use('/api/email',       autenticar, rotasEmail);
-app.use('/api/auditorias',  autenticar, rotasAuditorias); // <-- NOVA ROTA AQUI
-app.use('/api/logs',        autenticar, rotasLogs); 
+app.use('/api/auditorias',    autenticar, rotasAuditorias);
+app.use('/api/logs',          autenticar, rotasLogs);
+app.use('/api/configuracoes', rotasConfiguracoes);
+app.use('/api/agenda',        rotasAgenda);
 
 // ── Health check ─────────────────────────────────────────────
 app.get('/status', (req, res) => {

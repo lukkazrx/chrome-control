@@ -142,6 +142,40 @@ async function iniciarBanco() {
       detalhes      TEXT,
       data_hora     TEXT NOT NULL DEFAULT (datetime('now','localtime'))
     )`);
+
+    // =========================================================
+    // NOVA TABELA: CONFIGURAÇÕES DA ESCOLA (WHITE-LABEL)
+    // =========================================================
+    db.run(`CREATE TABLE IF NOT EXISTS configuracoes (
+      chave TEXT PRIMARY KEY,
+      valor TEXT
+    )`);
+
+    // =========================================================
+    // TABELAS: AGENDA DE RECURSOS
+    // =========================================================
+    db.run(`CREATE TABLE IF NOT EXISTS recursos_agenda (
+      id        TEXT PRIMARY KEY,
+      nome      TEXT NOT NULL,
+      descricao TEXT DEFAULT '',
+      cor       TEXT DEFAULT '#4f8ef7',
+      ativo     INTEGER NOT NULL DEFAULT 1,
+      ordem     INTEGER DEFAULT 0,
+      criado_em TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS agendamentos (
+      id               TEXT PRIMARY KEY,
+      recurso_id       TEXT NOT NULL,
+      professor_nome   TEXT NOT NULL,
+      professor_email  TEXT NOT NULL,
+      turma            TEXT DEFAULT '',
+      data             TEXT NOT NULL,
+      hora_inicio      TEXT NOT NULL,
+      hora_fim         TEXT NOT NULL,
+      obs              TEXT DEFAULT '',
+      criado_em        TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+    )`);
   });
 
   // --- MIGRATIONS AUTOMÁTICAS PARA BANCOS EXISTENTES ---
@@ -189,6 +223,41 @@ async function iniciarBanco() {
   }
 
   // --- FIM DAS MIGRATIONS ---
+
+  // --- SEED CONFIGURAÇÕES PADRÃO ---
+  const countConfigs = await get(`SELECT COUNT(*) as count FROM configuracoes`);
+  if (countConfigs.count === 0) {
+    console.log('🌱 Semeando configurações padrão da instituição...');
+    await run(`INSERT INTO configuracoes (chave, valor) VALUES 
+      ('escola_nome', 'ChromeControl Escola Padrão'),
+      ('atraso_padrao_horas', '4'),
+      ('brevo_api_key', ''),
+      ('email_remetente', 'noreply@chromecontrol.com.br'),
+      ('nome_remetente', 'Biblioteca da Escola'),
+      ('agenda_dominio', ''),
+      ('agenda_hora_inicio', '07:00'),
+      ('agenda_hora_fim', '18:00'),
+      ('agenda_duracao_slot', '50')
+    `);
+  } else {
+    // Migration: add agenda keys if they don't exist
+    const keys = ['agenda_dominio', 'agenda_hora_inicio', 'agenda_hora_fim', 'agenda_duracao_slot'];
+    const defaults = { agenda_dominio: '', agenda_hora_inicio: '07:00', agenda_hora_fim: '18:00', agenda_duracao_slot: '50' };
+    for (const k of keys) {
+      const exists = await get(`SELECT chave FROM configuracoes WHERE chave = ?`, [k]);
+      if (!exists) await run(`INSERT INTO configuracoes (chave, valor) VALUES (?, ?)`, [k, defaults[k]]);
+    }
+  }
+
+  // --- SEED RECURSOS PADRÃO DA AGENDA ---
+  const countRecursos = await get(`SELECT COUNT(*) as count FROM recursos_agenda`);
+  if (countRecursos.count === 0) {
+    console.log('🌱 Semeando recursos padrão da agenda...');
+    await run(`INSERT INTO recursos_agenda (id, nome, descricao, cor, ordem) VALUES
+      ('lab-info', 'Laboratório de Informática', 'Laboratório com computadores fixos', '#4f8ef7', 0),
+      ('carrinho-cb', 'Carrinho de Chromebooks', 'Carrinho com Chromebooks portáteis', '#38d9a9', 1)
+    `);
+  }
 
   // Cria admin padrão se não existir
   const admin = await get(`SELECT id FROM usuarios WHERE login = 'admin'`);

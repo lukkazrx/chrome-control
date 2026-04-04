@@ -156,25 +156,15 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
       </div>
 
       {/* --- NAVEGAÇÃO DE ABAS --- */}
-      <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border)', marginBottom: '1.5rem' }}>
+      <div className="tabs-nav">
         <button 
-          style={{ 
-            padding: '0.75rem 1rem', background: 'transparent', border: 'none', 
-            color: abaAtual === 'emprestimos' ? 'var(--accent)' : 'var(--muted)', 
-            borderBottom: abaAtual === 'emprestimos' ? '2px solid var(--accent)' : '2px solid transparent', 
-            fontWeight: 600, cursor: 'pointer', display: 'flex', gap: '0.5rem', alignItems: 'center', transition: 'all 0.2s' 
-          }}
+          className={`tab-btn ${abaAtual === 'emprestimos' ? 'active' : ''}`}
           onClick={() => { setAbaAtual('emprestimos'); goTo('historico'); }}
         >
           <Clock size={16} /> Empréstimos Realizados
         </button>
         <button 
-          style={{ 
-            padding: '0.75rem 1rem', background: 'transparent', border: 'none', 
-            color: abaAtual === 'auditorias' ? 'var(--accent)' : 'var(--muted)', 
-            borderBottom: abaAtual === 'auditorias' ? '2px solid var(--accent)' : '2px solid transparent', 
-            fontWeight: 600, cursor: 'pointer', display: 'flex', gap: '0.5rem', alignItems: 'center', transition: 'all 0.2s' 
-          }}
+          className={`tab-btn ${abaAtual === 'auditorias' ? 'active' : ''}`}
           onClick={() => { setAbaAtual('auditorias'); goTo('auditorias'); }}
         >
           <ScanLine size={16} /> Auditorias / Inventários
@@ -217,7 +207,7 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
 
           <div className="table-card">
             <div className="table-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+              <div className="flex-center-gap-lg flex-1">
                 <input 
                   className="search-box" 
                   type="text" 
@@ -277,7 +267,7 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
                         <tr className={`row-clickable ${isExpanded ? 'row-expanded' : ''}`} onClick={() => toggleRow(h.id)} title="Clique para ver os detalhes">
                           <td className="text-mono-sm">
                             {h.dataRetirada}
-                            <div style={{ color: 'var(--muted)', fontSize: '0.7rem', marginTop: '4px', fontFamily: 'var(--font)' }}>Por: {h.registradoPor || 'Sistema'}</div>
+                            <div className="text-micro-muted mt-1">Por: {h.registradoPor || 'Sistema'}</div>
                           </td>
                           <td className="font-medium">{h.professorNome}</td>
                           <td className="text-muted-sm">{formatarTurmas(h.professorTurma)} / {cargoLabel({ tipo: h.professorTipo, materia: h.professorMateria })}</td>
@@ -286,12 +276,12 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
                               {equipamentosResumo.map(c => (
                                 <span key={c.id} className="chip-loan-item">{c.numero ? `Nº ${c.numero}` : c.id}</span>
                               ))}
-                              {quantOcultos > 0 && <span className="text-muted-sm" style={{ fontWeight: 600, alignSelf: 'center' }}>+{quantOcultos}</span>}
+                              {quantOcultos > 0 && <span className="text-muted-sm fw-600 self-center">+{quantOcultos}</span>}
                             </div>
                           </td>
                           <td className="text-mono-sm">
                             {h.dataDevolucao || '—'}
-                            {h.dataDevolucao && <div style={{ color: 'var(--muted)', fontSize: '0.7rem', marginTop: '4px', fontFamily: 'var(--font)' }}>Por: {h.devolvidoPor || 'Sistema'}</div>}
+                            {h.dataDevolucao && <div className="text-micro-muted mt-1">Por: {h.devolvidoPor || 'Sistema'}</div>}
                           </td>
                           <td>
                             <span className={`chip ${h.status === 'devolvido' ? 'chip-available' : 'chip-loaned'}`}>
@@ -307,10 +297,10 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
                                 <div className="detail-grid">
                                   <div>
                                     <div className="detail-section-title">Lista Completa de Equipamentos ({h.chromebooks.length})</div>
-                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                    <div className="flex-wrap-gap-sm">
                                       {h.chromebooks.map(c => (
-                                        <div key={c.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '6px', padding: '0.5rem 0.8rem', fontSize: '0.8rem' }}>
-                                          <span className="text-mono-bold" style={{ display: 'block', marginBottom: '2px' }}>{c.numero ? `Nº ${c.numero}` : c.id}</span>
+                                        <div key={c.id} className="detail-item-box">
+                                          <span className="text-mono-bold d-block mb-1">{c.numero ? `Nº ${c.numero}` : c.id}</span>
                                           <span className="text-muted-sm">Pat: {c.patrimonio}</span>
                                         </div>
                                       ))}
@@ -318,13 +308,13 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
                                   </div>
                                   <div>
                                     <div className="detail-section-title">Acessórios Retirados</div>
-                                    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '6px', padding: '0.75rem', fontSize: '0.85rem', color: listaAcessorios.length > 0 ? 'var(--text)' : 'var(--muted)' }}>
+                                    <div className="detail-info-box" style={{ color: listaAcessorios.length > 0 ? 'var(--text)' : 'var(--muted)' }}>
                                       {listaAcessorios.length > 0 ? listaAcessorios.join(', ') : 'Nenhum acessório retirado.'}
                                     </div>
                                   </div>
                                   <div>
                                     <div className="detail-section-title">Observações do Empréstimo</div>
-                                    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '6px', padding: '0.75rem', fontSize: '0.85rem', color: h.obs ? 'var(--text)' : 'var(--muted)' }}>
+                                    <div className="detail-info-box" style={{ color: h.obs ? 'var(--text)' : 'var(--muted)' }}>
                                       {h.obs ? h.obs : 'Nenhuma observação registrada.'}
                                     </div>
                                   </div>
@@ -341,11 +331,11 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
             </div>
             
             {historicoFiltrado.length > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', flexWrap: 'wrap', gap: '1rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div className="table-footer">
+                <div className="flex-center-gap-md">
                   <span className="text-muted-sm">Mostrar:</span>
                   <select 
-                    style={{ background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: '6px', padding: '0.3rem', fontSize: '0.85rem', outline: 'none' }}
+                    className="items-per-page-select"
                     value={itensPorPagina} 
                     onChange={e => { setItensPorPagina(Number(e.target.value)); setPaginaAtual(1); }}
                   >
@@ -357,11 +347,11 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
                   <span className="text-muted-sm">itens por página</span>
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <span className="text-muted-sm" style={{ fontWeight: '500' }}>
+                <div className="flex-center-gap-lg">
+                  <span className="text-muted-sm fw-500">
                     {indexInicio + 1} - {Math.min(indexInicio + itensPorPagina, historicoFiltrado.length)} de {historicoFiltrado.length}
                   </span>
-                  <div style={{ display: 'flex', gap: '0.3rem' }}>
+                  <div className="flex-gap-xs">
                     <button className="btn btn-ghost btn-sm" disabled={paginaAtual === 1} onClick={() => setPaginaAtual(prev => prev - 1)}>
                       Anterior
                     </button>
@@ -403,9 +393,9 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
                 <tr>
                   <th>Data da Auditoria</th>
                   <th>Responsável</th>
-                  <th style={{ textAlign: 'center' }}>Esperados</th>
-                  <th style={{ textAlign: 'center' }}>Encontrados</th>
-                  <th style={{ textAlign: 'center' }}>Faltando</th>
+                  <th className="text-center">Esperados</th>
+                  <th className="text-center">Encontrados</th>
+                  <th className="text-center">Faltando</th>
                   <th>Status</th>
                   <th>Ações</th>
                 </tr>
@@ -415,11 +405,11 @@ export default function Historico({ state, setState, abaAtiva, goTo }) {
                   const isPerfeito = aud.qtd_pendente === 0;
                   return (
                     <tr key={aud.id}>
-                      <td className="text-mono-sm" style={{ fontSize: '0.85rem' }}>{aud.data_auditoria}</td>
+                      <td className="text-mono-sm fs-sm">{aud.data_auditoria}</td>
                       <td className="font-medium">{aud.responsavel}</td>
-                      <td style={{ textAlign: 'center' }} className="text-muted-sm">{aud.qtd_esperada}</td>
-                      <td style={{ textAlign: 'center', color: 'var(--accent2)', fontWeight: 600 }}>{aud.qtd_encontrada}</td>
-                      <td style={{ textAlign: 'center', color: isPerfeito ? 'var(--muted)' : 'var(--danger)', fontWeight: isPerfeito ? 400 : 700 }}>
+                      <td className="text-center text-muted-sm">{aud.qtd_esperada}</td>
+                      <td className="text-center text-accent2 fw-600">{aud.qtd_encontrada}</td>
+                      <td className={`text-center fw-${isPerfeito ? '400' : '700'}`} style={{ color: isPerfeito ? 'var(--muted)' : 'var(--danger)' }}>
                         {aud.qtd_pendente}
                       </td>
                       <td>

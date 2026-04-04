@@ -632,8 +632,8 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
             <span className="section-label">Observações (opcional)</span>
             <input 
               type="text" 
-              className="inline-input w-full" 
-              style={{ maxWidth: '400px', marginTop: 0 }} 
+              className="inline-input w-full m-0" 
+              style={{ maxWidth: '400px' }} 
               placeholder="Ex: Aula de robótica" 
               value={obs} 
               onChange={e => setObs(e.target.value)} 
@@ -699,8 +699,8 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
                       {temEmail ? `📧 ${prof.email}` : <span className="text-danger">⚠️ Sem e-mail cadastrado</span>}
                     </div>
                     
-                    <div className="loan-equipments" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    <div className="loan-equipments flex-col-start">
+                      <div className="flex-wrap-gap-sm">
                         {cbsToShow.map(c => (
                           <span key={c.id} className="chip-loan-item">
                             {c.numero ? `Nº ${c.numero}` : c.id}
@@ -723,9 +723,9 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
 
                   </div>
                   <div className="loan-actions">
-                    <div className="loan-meta" style={{ textAlign: 'right' }}>
+                    <div className="loan-meta text-right">
                       Retirada<br />{emp.dataRetirada}<br />
-                      <span style={{ fontSize: '0.7rem', color: 'var(--muted)', fontFamily: 'var(--font)' }}>Por: {emp.registradoPor || 'Sistema'}</span><br />
+                      <span className="text-micro-muted">Por: {emp.registradoPor || 'Sistema'}</span><br />
                       <span className="text-warn">{cbList.length} dispositivo(s)</span>
                     </div>
                     <button 
@@ -759,17 +759,13 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
               Selecione QUAIS equipamentos estão sendo devolvidos agora.
             </p>
             
-            <div className="mb-4" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className="mb-4 flex-col-gap-sm">
               {empParaDevolver.chromebooks.map(c => {
                 const isSelected = cbsParaDevolver.includes(c.id);
                 return (
                   <label 
                     key={c.id} 
-                    style={{ 
-                      display: 'flex', alignItems: 'center', gap: '0.75rem', 
-                      padding: '0.75rem', border: `1px solid ${isSelected ? 'var(--accent2)' : 'var(--border)'}`, 
-                      borderRadius: '8px', cursor: 'pointer', background: isSelected ? 'rgba(56, 217, 169, 0.05)' : 'var(--surface2)'
-                    }}
+                    className={`modal-checkbox-card ${isSelected ? 'selected' : ''}`}
                   >
                     <input 
                       type="checkbox" 
@@ -798,7 +794,7 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
               }
               if (acs.length > 0) {
                 return (
-                  <div className="mb-4 p-3" style={{ background: 'rgba(247, 201, 79, 0.1)', border: '1px solid var(--warn)', borderRadius: '8px' }}>
+                  <div className="mb-4 alert-warning-card">
                     <div className="text-warn font-medium" style={{ fontSize: '0.8rem', marginBottom: '0.25rem' }}>⚠️ Não se esqueça de conferir:</div>
                     <div className="text-muted-sm">{acs.join(', ')}</div>
                   </div>
@@ -806,7 +802,7 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
               }
             })()}
 
-            <div className="modal-actions mt-4" style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <div className="modal-actions mt-4 flex-between-center w-full">
               <label className="toggle-switch">
                 <input 
                   type="checkbox" 
@@ -817,7 +813,7 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
                 <span className="toggle-label">Auto-Recibo: {autoEnviarEmail ? 'ON' : 'OFF'}</span>
               </label>
               
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div className="flex-gap-sm">
                 <button className="btn btn-ghost" onClick={() => setDevModalOpen(false)}>Cancelar</button>
                 <button 
                   className="btn btn-success" 
@@ -840,7 +836,7 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
             <h2>Editar Empréstimo</h2>
             <p className="text-muted-sm mb-4">Altere os dados do empréstimo ativo.</p>
             
-            <div className="form-group mb-4" style={{ position: 'relative' }}>
+            <div className="form-group mb-4 pos-relative">
               <label>Responsável</label>
               <input 
                 type="text" 
@@ -867,7 +863,7 @@ export default function Emprestimos({ state, setState, usuarioLogado }) {
               )}
             </div>
 
-            <div className="form-group mb-4" style={{ position: 'relative' }}>
+            <div className="form-group mb-4 pos-relative">
               <label>Adicionar Equipamentos</label>
               <input 
                 type="text" 

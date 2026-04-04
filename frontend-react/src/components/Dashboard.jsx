@@ -80,9 +80,9 @@ function isDentroDoPeriodo(dataStr, periodo) {
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
-      <div style={{ background: 'rgba(34, 38, 58, 0.85)', backdropFilter: 'blur(8px)', border: '1px solid var(--accent)', padding: '0.75rem 1rem', borderRadius: '8px', color: 'var(--text)', fontSize: '0.8rem', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}>
-        <p style={{ fontWeight: '700', marginBottom: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '4px', color: '#fff' }}>{payload[0].payload.name}</p>
-        <p style={{ color: 'var(--accent2)', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0, fontWeight: '500' }}>
+      <div className="custom-tooltip">
+        <p className="custom-tooltip-title">{payload[0].payload.name}</p>
+        <p className="custom-tooltip-item">
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent2)' }}></span>
           Registros: <strong style={{ color: '#fff' }}>{payload[0].value}</strong>
         </p>
@@ -301,7 +301,7 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
     <section className="page active" id="page-dashboard">
       <div className="page-header">
         <div>
-          <h1 style={{ fontWeight: 800 }}>{saudacao}, {nomeExibicao}! 👋</h1>
+          <h1 className="fw-800">{saudacao}, {nomeExibicao}! 👋</h1>
           <p>Visão geral do Centro de Comando e saúde dos empréstimos.</p>
         </div>
         <button className="btn btn-primary" onClick={handleGerarPDF}>
@@ -310,16 +310,16 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
       </div>
 
       {alertasCriticos.length > 0 && (
-        <div className="mb-4" style={{ background: 'rgba(255, 94, 94, 0.1)', border: '1px solid var(--danger)', borderRadius: 'var(--radius)', padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem', animation: 'slideIn 0.3s ease' }}>
-          <div style={{ background: 'var(--danger)', color: '#fff', borderRadius: '50%', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div className="mb-4 alert-critical">
+          <div className="alert-icon-wrapper">
             <Zap size={22} fill="white" />
           </div>
           <div>
-            <h3 style={{ color: 'var(--danger)', fontSize: '0.95rem', fontWeight: 'bold', margin: '0 0 0.15rem 0' }}>Atenção Imediata Necessária!</h3>
-            <p style={{ color: 'var(--text)', fontSize: '0.82rem', margin: 0 }}>
+            <h3 className="alert-title">Atenção Imediata Necessária!</h3>
+            <p className="alert-text">
               Você possui <strong>{alertasCriticos.length} empréstimo{(alertasCriticos.length > 1) ? 's' : ''}</strong> que já ultrapassaram o limite de 24 horas de segurança de posse.
               <br />
-              <span className="text-muted-sm" style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => document.getElementById('dashboard-loans').scrollIntoView({ behavior: 'smooth' })}>
+              <span className="text-muted-sm link-underline" onClick={() => document.getElementById('dashboard-loans').scrollIntoView({ behavior: 'smooth' })}>
                 Verifique agora a aba de Empréstimos Ativos pendentes de <strong>{alertasCriticos.slice(0, 2).map(a => a.professorNome).join(', ')}{alertasCriticos.length > 2 ? ' e outros' : ''}</strong>.
               </span>
             </p>
@@ -327,19 +327,19 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
         </div>
       )}
 
-      <div className="form-card mb-4" style={{ padding: '1.25rem 1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-          <span className="section-label" style={{ margin: 0 }}>Composição da Frota ({totalCBs} Total)</span>
+      <div className="form-card mb-4">
+        <div className="flex-between-center mb-3">
+          <span className="section-label m-0">Composição da Frota ({totalCBs} Total)</span>
         </div>
-        <div style={{ width: '100%', height: '14px', background: 'var(--surface2)', borderRadius: '99px', overflow: 'hidden', display: 'flex' }}>
-          <div style={{ width: `${dispPerc}%`, background: 'var(--accent2)', transition: 'width 0.5s' }} title={`Disponível: ${disponiveis}`} />
-          <div style={{ width: `${empPerc}%`, background: 'var(--warn)', transition: 'width 0.5s' }} title={`Emprestado: ${emprestados}`} />
-          <div style={{ width: `${manPerc}%`, background: 'var(--danger)', transition: 'width 0.5s' }} title={`Manutenção: ${emManutencao}`} />
+        <div className="progress-bar-container">
+          <div className="progress-fill bg-success" style={{ width: `${dispPerc}%` }} title={`Disponível: ${disponiveis}`} />
+          <div className="progress-fill bg-warning" style={{ width: `${empPerc}%` }} title={`Emprestado: ${emprestados}`} />
+          <div className="progress-fill bg-danger" style={{ width: `${manPerc}%` }} title={`Manutenção: ${emManutencao}`} />
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', marginTop: '0.75rem', fontSize: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent2)' }}></span> <strong className="text-text">{disponiveis}</strong> <span className="text-muted-sm">Disponíveis</span></div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--warn)' }}></span> <strong className="text-text">{emprestados}</strong> <span className="text-muted-sm">Em Uso Lento</span></div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--danger)' }}></span> <strong className="text-text">{emManutencao}</strong> <span className="text-muted-sm">TI / Manutenção</span></div>
+        <div className="progress-labels-container">
+          <div className="flex-center-gap-sm"><span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent2)' }}></span> <strong className="text-text">{disponiveis}</strong> <span className="text-muted-sm">Disponíveis</span></div>
+          <div className="flex-center-gap-sm"><span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--warn)' }}></span> <strong className="text-text">{emprestados}</strong> <span className="text-muted-sm">Em Uso Lento</span></div>
+          <div className="flex-center-gap-sm"><span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--danger)' }}></span> <strong className="text-text">{emManutencao}</strong> <span className="text-muted-sm">TI / Manutenção</span></div>
         </div>
       </div>
 
@@ -404,8 +404,8 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
                       {temEmail ? `📧 ${prof.email}` : <span className="text-danger">⚠️ Sem e-mail cadastrado</span>}
                     </div>
 
-                    <div className="loan-equipments" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    <div className="loan-equipments flex-col-start">
+                      <div className="flex-wrap-gap-sm">
                         {cbsToShow.map(c => (
                           <span key={c.id} className="chip-loan-item">
                             {c.numero ? `Nº ${c.numero}` : c.id}
@@ -427,9 +427,9 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
                     )}
                   </div>
                   <div className="loan-actions">
-                    <div className="loan-meta" style={{ textAlign: 'right' }}>
+                    <div className="loan-meta text-right">
                       Retirada<br />{emp.dataRetirada}<br />
-                      <span style={{ fontSize: '0.7rem', color: 'var(--muted)', fontFamily: 'var(--font)' }}>Por: {emp.registradoPor || 'Sistema'}</span><br />
+                      <span className="text-micro-muted">Por: {emp.registradoPor || 'Sistema'}</span><br />
                       <span className="text-warn">{cbList.length} dispositivo(s)</span>
                     </div>
 
@@ -463,18 +463,17 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
       {/* --- SESSÃO GRÁFICOS COM FILTRO --- */}
       {state.historico.length > 0 && (
         <div className="mb-4">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', marginTop: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-            <h2 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="section-heading-row">
+            <h2 className="section-title">
               <BarChart3 size={20} className="text-accent" /> Análise de Uso
             </h2>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div className="flex-center-gap-md">
               {/* FILTRO DE PERÍODO */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div className="flex-center-gap-sm">
                 <Filter size={16} className="text-muted" />
                 <select
-                  className="inline-input"
-                  style={{ width: 'auto', marginTop: 0, padding: '0.4rem 1.5rem 0.4rem 0.8rem', fontSize: '0.8rem' }}
+                  className="inline-input filter-select-sm"
                   value={periodoGraficos}
                   onChange={e => setPeriodoGraficos(e.target.value)}
                 >
@@ -486,22 +485,21 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
               </div>
 
               {/* DROPDOWN DE VISIBILIDADE DOS GRÁFICOS */}
-              <div className="dropdown-container" style={{ position: 'relative' }}>
+              <div className="dropdown-container pos-relative">
                 <button
-                  className="btn btn-ghost"
-                  style={{ padding: '0.4rem 0.8rem', height: 'auto', marginTop: 0 }}
+                  className="btn btn-ghost btn-compact"
                   onClick={() => setShowMenuVisibilidade(!showMenuVisibilidade)}
                 >
-                  <LayoutGrid size={16} /> <span style={{ marginLeft: '4px', fontSize: '0.8rem' }}>Exibir</span>
+                  <LayoutGrid size={16} /> <span className="ml-1 fs-sm">Exibir</span>
                 </button>
 
                 {showMenuVisibilidade && (
-                  <div className="dropdown-menu" style={{ right: 0, left: 'auto', minWidth: '220px', top: '110%', zIndex: 10 }}>
-                    <div style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--muted)', textTransform: 'uppercase', borderBottom: '1px solid var(--border)', marginBottom: '0.5rem' }}>
+                  <div className="dropdown-menu dropdown-menu-right">
+                    <div className="dropdown-menu-header">
                       Mostrar Gráficos
                     </div>
 
-                    <label className="dropdown-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>
+                    <label className="dropdown-item-check">
                       <input
                         type="checkbox"
                         checked={visibilidadeGraficos.dias}
@@ -510,7 +508,7 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
                       Uso por Dia da Semana
                     </label>
 
-                    <label className="dropdown-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>
+                    <label className="dropdown-item-check">
                       <input
                         type="checkbox"
                         checked={visibilidadeGraficos.profs}
@@ -519,7 +517,7 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
                       Top Professores
                     </label>
 
-                    <label className="dropdown-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>
+                    <label className="dropdown-item-check">
                       <input
                         type="checkbox"
                         checked={visibilidadeGraficos.turmas}
@@ -528,7 +526,7 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
                       Top Turmas
                     </label>
 
-                    <label className="dropdown-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>
+                    <label className="dropdown-item-check">
                       <input
                         type="checkbox"
                         checked={visibilidadeGraficos.acessorios}
@@ -551,15 +549,15 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
               <p>Todos os gráficos estão ocultos. Use o botão "Exibir" para ativá-los.</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+            <div className="charts-grid-container">
 
               {/* GRÁFICO 1: PICOS DE DEMANDA */}
               {visibilidadeGraficos.dias && (
-                <div className="form-card" style={{ padding: '1.5rem 1.5rem 0.5rem 1.5rem' }}>
-                  <h3 style={{ fontSize: '0.85rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <div className="form-card chart-card-padding">
+                  <h3 className="chart-title">
                     <Activity size={16} /> Uso por Dia da Semana
                   </h3>
-                  <div style={{ width: '100%', height: 220 }}>
+                  <div className="chart-container-height">
                     <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                       <AreaChart data={dataDiasSemana} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                         <defs>
@@ -580,11 +578,11 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
 
               {/* GRÁFICO 2: TOP PROFESSORES */}
               {visibilidadeGraficos.profs && (
-                <div className="form-card" style={{ padding: '1.5rem 1.5rem 0.5rem 1.5rem' }}>
-                  <h3 style={{ fontSize: '0.85rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+                <div className="form-card chart-card-padding">
+                  <h3 className="chart-title">
                     Top 5 Professores
                   </h3>
-                  <div style={{ width: '100%', height: 220 }}>
+                  <div className="chart-container-height">
                     <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                       <BarChart data={dataTopProfs} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                         <XAxis dataKey="name" stroke="var(--muted)" fontSize={10} tickLine={false} axisLine={false} />
@@ -599,7 +597,7 @@ export default function Dashboard({ state, setState, usuarioLogado, editarEmpres
 
               {/* GRÁFICO 3: TOP TURMAS */}
               {visibilidadeGraficos.turmas && (
-                <div className="form-card" style={{ padding: '1.5rem 1.5rem 0.5rem 1.5rem' }}>
+                <div className="form-card chart-card-padding">
                   <h3 style={{ fontSize: '0.85rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
                     Top 5 Turmas Atendidas
                   </h3>

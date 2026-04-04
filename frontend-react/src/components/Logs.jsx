@@ -9,7 +9,7 @@ export default function Logs({ usuarioLogado }) {
 
   if (usuarioLogado?.perfil !== 'admin') {
     return (
-      <div className="card text-center" style={{ marginTop: '2rem' }}>
+      <div className="card text-center mt-4">
         <h3>Acesso Restrito</h3>
         <p>Apenas administradores podem visualizar o histórico de sistema.</p>
       </div>
@@ -36,7 +36,7 @@ export default function Logs({ usuarioLogado }) {
     <section className="page active" id="page-logs">
       <div className="page-header">
         <div>
-          <h1><Activity size={24} style={{ display: 'inline', verticalAlign: 'bottom', marginRight: '8px' }} /> Registro de Atividades</h1>
+          <h1><Activity size={24} className="icon-inline" /> Registro de Atividades</h1>
           <p>Trilha de auditoria - Últimas 200 ações realizadas no sistema.</p>
         </div>
         <button className="btn btn-ghost" onClick={fetchLogs} disabled={carregando}>
@@ -78,12 +78,12 @@ export default function Logs({ usuarioLogado }) {
                         {log.operador_nome}
                       </td>
                       <td>
-                        <span className="sel-tag" style={{ padding: '0.25rem 0.6rem', fontSize: '0.75rem', display: 'inline-block' }}>
+                        <span className="sel-tag tag-sm d-inline-block">
                           {log.acao}
                         </span>
                       </td>
-                      <td className="text-muted-sm" style={{ fontWeight: '500' }}>{log.entidade || '-'}</td>
-                      <td className="text-muted-sm" style={{ fontSize: '0.8rem' }}>{log.detalhes || '-'}</td>
+                      <td className="text-muted-sm fw-500">{log.entidade || '-'}</td>
+                      <td className="text-muted-sm fs-sm">{log.detalhes || '-'}</td>
                     </tr>
                   )
                 })

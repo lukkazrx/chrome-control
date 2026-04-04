@@ -296,9 +296,9 @@ export default function Professores({ state, setState, usuarioLogado }) {
             <button className="btn btn-ghost" onClick={baixarPlanilhaModelo}>
               <span className="icon"><Download size={16} /></span> Modelo XLSX
             </button>
-            <label className="btn btn-ghost" style={{ cursor: 'pointer' }}>
+            <label className="btn btn-ghost cursor-pointer">
               <span className="icon"><Upload size={16} /></span> Importar XLSX
-              <input type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleImportarXLSX} />
+              <input type="file" accept=".xlsx,.xls" className="d-none" onChange={handleImportarXLSX} />
             </label>
           </div>
         )}
@@ -411,7 +411,7 @@ export default function Professores({ state, setState, usuarioLogado }) {
                     <td className="nome-professor">{prof.nome}</td>
                     <td className="text-mono-sm">
                       {prof.codigo_barras ? (
-                        <span className="chip" style={{ background: 'var(--surface2)', color: 'var(--text)', border: '1px solid var(--border)' }}>
+                        <span className="chip chip-outline">
                           {prof.codigo_barras}
                         </span>
                       ) : '—'}
@@ -447,11 +447,11 @@ export default function Professores({ state, setState, usuarioLogado }) {
         </div>
 
         {filteredProfessores.length > 0 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', flexWrap: 'wrap', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="table-footer">
+            <div className="flex-center-gap-md">
               <span className="text-muted-sm">Mostrar:</span>
               <select 
-                style={{ background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: '6px', padding: '0.3rem', fontSize: '0.85rem', outline: 'none' }}
+                className="items-per-page-select"
                 value={itensPorPagina} 
                 onChange={e => { setItensPorPagina(Number(e.target.value)); setPaginaAtual(1); }}
               >
@@ -463,11 +463,11 @@ export default function Professores({ state, setState, usuarioLogado }) {
               <span className="text-muted-sm">itens por página</span>
             </div>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <span className="text-muted-sm" style={{ fontWeight: '500' }}>
+            <div className="flex-center-gap-lg">
+              <span className="text-muted-sm fw-500">
                 {indexInicio + 1} - {Math.min(indexInicio + itensPorPagina, filteredProfessores.length)} de {filteredProfessores.length}
               </span>
-              <div style={{ display: 'flex', gap: '0.3rem' }}>
+              <div className="flex-gap-xs">
                 <button className="btn btn-ghost btn-sm" disabled={paginaAtual === 1} onClick={() => setPaginaAtual(prev => prev - 1)}>
                   Anterior
                 </button>
